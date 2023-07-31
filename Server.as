@@ -18,7 +18,6 @@ void onInit(CRules@ this)
 
 void onRestart(CRules@ this)
 {
-    @entity = Entity();
     @manager = Network::getManager();
 }
 
@@ -29,6 +28,11 @@ void onNewPlayerJoin(CRules@ this, CPlayer@ player)
 
 void onTick(CRules@ this)
 {
+    if (getGameTime() == 1)
+    {
+        @entity = Entity();
+    }
+
     if (getGameTime() % getTicksASecond() == 0)
     {
         entity.Toggle();
@@ -41,6 +45,7 @@ void onTick(CRules@ this)
         Entity@ entity = entities[i];
 
         CBitStream bs;
+        bs.write_u16(entity.getType());
         bs.write_u16(entity.getID());
         entity.Serialize(bs);
 

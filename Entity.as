@@ -32,29 +32,44 @@ shared class Entity
 
     void Serialize(CBitStream@ bs)
     {
-
+        bs.write_bool(toggle);
     }
 
     bool deserialize(CBitStream@ bs)
     {
-        return true;
+        return bs.saferead_bool(toggle);
     }
 
     void Toggle()
     {
         toggle = !toggle;
 
-        print("server: "+isServer()+"; toggle: "+toggle);
+        // if (isServer())
+        // {
+        //     CRules@ rules = getRules();
 
-        if (isServer())
-        {
-            CRules@ rules = getRules();
-
-            CBitStream bs;
-            bs.write_u16(id);
-            bs.write_bool(toggle);
-            rules.SendCommand(rules.getCommandID("toggle"), bs, true);
-        }
-
+        //     CBitStream bs;
+        //     bs.write_u16(id);
+        //     bs.write_bool(toggle);
+        //     rules.SendCommand(rules.getCommandID("toggle"), bs, true);
+        // }
     }
+}
+
+shared Entity@ createEntity(u16 type, u16 id)
+{
+	switch (type)
+	{
+	case EntityType::EntityA:
+		return Entity(id);
+	// case EntityType::EntityB:
+	// 	return EntityB(id);
+	}
+	return null;
+}
+
+shared enum EntityType
+{
+	EntityA,
+	EntityB
 }

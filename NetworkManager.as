@@ -34,7 +34,7 @@ shared class NetworkManager
 			}
 		}
 
-		error("Attempted to remove an entity that doesn't exist");
+		error("Attempted to remove an entity that does not exist");
 	}
 
 	void RemoveAll()
