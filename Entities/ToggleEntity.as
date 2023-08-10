@@ -1,20 +1,20 @@
-shared class Entity
+shared class ToggleEntity : Entity
 {
     private u16 id = 0;
     private bool toggle = false;
 
-    Entity()
+    ToggleEntity()
     {
         id = getUniqueId();
         Network::getManager().Add(this);
     }
 
-    ~Entity()
+    ~ToggleEntity()
     {
         Network::getManager().Remove(id);
     }
 
-	Entity(u16 id)
+	ToggleEntity(u16 id)
 	{
 		this.id = id;
         Network::getManager().Add(this);
@@ -43,33 +43,10 @@ shared class Entity
     void Toggle()
     {
         toggle = !toggle;
-
-        // if (isServer())
-        // {
-        //     CRules@ rules = getRules();
-
-        //     CBitStream bs;
-        //     bs.write_u16(id);
-        //     bs.write_bool(toggle);
-        //     rules.SendCommand(rules.getCommandID("toggle"), bs, true);
-        // }
     }
-}
 
-shared Entity@ createEntity(u16 type, u16 id)
-{
-	switch (type)
-	{
-	case EntityType::EntityA:
-		return Entity(id);
-	// case EntityType::EntityB:
-	// 	return EntityB(id);
-	}
-	return null;
-}
-
-shared enum EntityType
-{
-	EntityA,
-	EntityB
+    bool getToggled()
+    {
+        return toggle;
+    }
 }
