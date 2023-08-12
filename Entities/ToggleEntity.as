@@ -6,18 +6,11 @@ shared class ToggleEntity : Entity
     ToggleEntity()
     {
         id = getUniqueId();
-        Network::getManager().Add(this);
-    }
-
-    ~ToggleEntity()
-    {
-        Network::getManager().Remove(id);
     }
 
 	ToggleEntity(u16 id)
 	{
 		this.id = id;
-        Network::getManager().Add(this);
 	}
 
     u16 getID()
@@ -27,7 +20,12 @@ shared class ToggleEntity : Entity
 
     u16 getType()
     {
-        return 0;
+        return EntityType::Toggle;
+    }
+
+    CPlayer@ getOwner()
+    {
+        return null;
     }
 
     void Serialize(CBitStream@ bs)
