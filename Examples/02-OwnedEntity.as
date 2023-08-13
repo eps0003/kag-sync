@@ -1,5 +1,4 @@
 #include "Networking.as"
-#include "PlayerEntity.as"
 
 NetworkManager@ manager;
 

@@ -1,5 +1,4 @@
 #include "Networking.as"
-#include "ToggleEntity.as"
 
 NetworkManager@ manager;
 ToggleEntity@ entity;
