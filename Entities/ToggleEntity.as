@@ -5,7 +5,7 @@ shared class ToggleEntity : Entity
 
     ToggleEntity()
     {
-        id = getUniqueId();
+        id = generateUniqueId();
     }
 
 	ToggleEntity(u16 id)

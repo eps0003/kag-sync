@@ -6,7 +6,7 @@ shared class PlayerEntity : Entity
 
     PlayerEntity(CPlayer@ player)
     {
-        id = getUniqueId();
+        id = generateUniqueId();
         @this.player = player;
     }
 

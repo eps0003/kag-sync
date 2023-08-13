@@ -1,6 +1,13 @@
-shared u16 getUniqueId()
+shared u16 generateUniqueId()
 {
-	return getRules().add_u16("_id", 1);
+	// 0 is reserved for uninitialized entities
+	// Does not account for ID collisions when it wraps around
+	// Surely by then, older entities will no longer exist
+
+	u16 id = getRules().get_u16("_id");
+	id = id == 65535 ? 1 : id + 1;
+	getRules().set_u16("_id", id);
+	return id;
 }
 
 shared bool saferead_player(CBitStream@ bs, CPlayer@ &out player)
