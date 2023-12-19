@@ -32,10 +32,7 @@ shared class PlayerEntity : Entity
 
     void Serialize(CBitStream@ bs)
     {
-        if (player !is null)
-        {
-            bs.write_u16(player !is null ? player.getNetworkID() : 0);
-        }
+        bs.write_u16(player !is null ? player.getNetworkID() : 0);
 
         Vec2f mousePos = isServer() ? this.mousePos : getControls().getMouseScreenPos();
         bs.write_Vec2f(mousePos);
