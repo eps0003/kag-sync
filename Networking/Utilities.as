@@ -16,5 +16,5 @@ shared bool saferead_player(CBitStream@ bs, CPlayer@ &out player)
 	if (!bs.saferead_netid(id)) return false;
 
 	@player = getPlayerByNetworkId(id);
-	return player !is null;
+	return player !is null || id == 0;
 }
