@@ -1,17 +1,22 @@
 shared class NetworkManager
 {
     private Entity@[] entities;
+    private dictionary entityMap;
 
     void Add(Entity@ entity)
     {
-		if (exists(entity.getID()))
+		u16 id = entity.getID();
+
+		if (exists(id))
 		{
-			error("Attempted to add an entity with an existing ID");
+			error("Attempted to add an entity with an existing ID: " + id);
 			return;
 		}
 
 		entities.push_back(entity);
-		print("Added entity: " + entity.getID());
+		entityMap.set("" + id, @entity);
+
+		print("Added entity: " + id);
     }
 
 	void Remove(u16 id)
@@ -21,6 +26,8 @@ shared class NetworkManager
 			if (entities[i].getID() == id)
 			{
 				entities.removeAt(i);
+				entityMap.delete("" + id);
+
 				print("Removed entity: " + id);
 
 				if (isServer())
@@ -34,39 +41,27 @@ shared class NetworkManager
 			}
 		}
 
-		error("Attempted to remove an entity that does not exist");
+		error("Attempted to remove an entity that does not exist: " + id);
 	}
 
 	void RemoveAll()
 	{
 		entities.clear();
+		entityMap.deleteAll();
+
 		print("Removed all entities");
 	}
 
 	bool exists(u16 id)
 	{
-		for (uint i = 0; i < entities.size(); i++)
-		{
-			if (entities[i].getID() == id)
-			{
-				return true;
-			}
-		}
-
-		return false;
+		return entityMap.exists("" + id);
 	}
 
 	Entity@ get(u16 id)
 	{
-		for (uint i = 0; i < entities.size(); i++)
-		{
-			if (entities[i].getID() == id)
-			{
-				return entities[i];
-			}
-		}
-
-		return null;
+		Entity@ entity;
+		entityMap.get("" + id, @entity);
+		return entity;
 	}
 
 	Entity@[] getAll()
