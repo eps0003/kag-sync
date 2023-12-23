@@ -9,4 +9,6 @@ shared interface Entity : Serializable
     u16 getID();
     u16 getType();
     CPlayer@ getOwner();
+
+    void Update();
 }

@@ -27,6 +27,8 @@ void onTick(CRules@ this)
     {
         Entity@ entity = entities[i];
 
+        entity.Update();
+
         CBitStream bs;
         bs.write_u16(entity.getType());
         bs.write_u16(entity.getID());

@@ -28,6 +28,11 @@ shared class ToggleEntity : Entity
         return null;
     }
 
+    void Update()
+    {
+
+    }
+
     void Serialize(CBitStream@ bs)
     {
         bs.write_bool(toggle);

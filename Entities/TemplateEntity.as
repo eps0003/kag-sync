@@ -27,6 +27,11 @@ shared class TemplateEntity : Entity
         return null;
     }
 
+    void Update()
+    {
+
+    }
+
     void Serialize(CBitStream@ bs)
     {
 

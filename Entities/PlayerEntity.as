@@ -31,6 +31,11 @@ shared class PlayerEntity : Entity
         return player;
     }
 
+    void Update()
+    {
+
+    }
+
     void Serialize(CBitStream@ bs)
     {
         bs.write_u16(player !is null ? player.getNetworkID() : 0);
