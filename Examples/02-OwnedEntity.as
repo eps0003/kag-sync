@@ -30,3 +30,11 @@ void onNewPlayerJoin(CRules@ this, CPlayer@ player)
         manager.Add(PlayerEntity(player));
     }
 }
+
+void onPlayerLeave(CRules@ this, CPlayer@ player)
+{
+    if (isServer())
+    {
+        manager.Remove(player.get_u16("entity_id"));
+    }
+}

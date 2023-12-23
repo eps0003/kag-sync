@@ -8,6 +8,7 @@ shared class PlayerEntity : Entity
     {
         id = generateUniqueId();
         @this.player = player;
+        player.set_u16("entity_id", id);
     }
 
 	PlayerEntity(u16 id)
