@@ -4,6 +4,7 @@
 
 #include "ToggleEntity.as"
 #include "PlayerEntity.as"
+#include "ParentEntity.as"
 
 shared Entity@ createEntity(u16 type, u16 id)
 {
@@ -13,6 +14,8 @@ shared Entity@ createEntity(u16 type, u16 id)
 		return ToggleEntity(id);
 	case EntityType::Player:
 		return PlayerEntity(id);
+	case EntityType::Parent:
+		return ParentEntity(id);
 	}
 	return null;
 }
@@ -20,5 +23,6 @@ shared Entity@ createEntity(u16 type, u16 id)
 shared enum EntityType
 {
 	Toggle,
-	Player
+	Player,
+	Parent
 }
