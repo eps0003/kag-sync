@@ -1,10 +1,10 @@
 shared class NetworkManager
 {
-    private Entity@[] entities;
-    private dictionary entityMap;
+	private Entity@[] entities;
+	private dictionary entityMap;
 
-    void Add(Entity@ entity)
-    {
+	void Add(Entity@ entity)
+	{
 		u16 id = entity.getID();
 
 		if (exists(id))
@@ -17,7 +17,7 @@ shared class NetworkManager
 		entityMap.set("" + id, @entity);
 
 		print("Added entity: " + id);
-    }
+	}
 
 	void Remove(u16 id)
 	{
