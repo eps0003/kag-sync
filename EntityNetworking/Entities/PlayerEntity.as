@@ -1,24 +1,11 @@
 shared class PlayerEntity : Entity
 {
-	private u16 id = 0;
 	private CPlayer@ player;
 	private Vec2f mousePos = Vec2f_zero;
 
 	PlayerEntity(CPlayer@ player)
 	{
-		id = generateUniqueId();
 		@this.player = player;
-		player.set_u16("entity_id", id);
-	}
-
-	PlayerEntity(u16 id)
-	{
-		this.id = id;
-	}
-
-	u16 getID()
-	{
-		return id;
 	}
 
 	u16 getType()

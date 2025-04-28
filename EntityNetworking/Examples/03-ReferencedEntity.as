@@ -1,9 +1,12 @@
 #include "Networking.as"
 
 NetworkManager@ manager;
+u16 toggleId = 0;
 
 void onInit(CRules@ this)
 {
+	this.addCommandID("toggle_id");
+
 	onRestart(this);
 }
 
@@ -19,19 +22,41 @@ void onTick(CRules@ this)
 		if (getGameTime() == 1)
 		{
 			ToggleEntity@ toggle = ToggleEntity();
-			Entity@ parent = ParentEntity(toggle);
+			toggleId = manager.add(toggle);
 
-			manager.Add(toggle);
-			manager.Add(parent);
+			Entity@ parent = ParentEntity(toggleId);
+			manager.add(parent);
+
+			CBitStream bs;
+			bs.write_u16(toggleId);
+			this.SendCommand(this.getCommandID("toggle_id"), bs, true);
 		}
 	}
 
 	if (isClient())
 	{
-		ToggleEntity@ entity = cast<ToggleEntity>(manager.get(1));
-		if (entity !is null)
+		ToggleEntity@ toggle = cast<ToggleEntity>(manager.get(toggleId));
+		if (toggle !is null)
 		{
-			print(""+entity.getToggled());
+			print(""+toggle.getToggled());
 		}
+	}
+}
+
+void onNewPlayerJoin(CRules@ this, CPlayer@ player)
+{
+	if (isServer())
+	{
+		CBitStream bs;
+		bs.write_u16(toggleId);
+		this.SendCommand(this.getCommandID("toggle_id"), bs, player);
+	}
+}
+
+void onCommand(CRules@ this, u8 cmd, CBitStream@ params)
+{
+	if (cmd == this.getCommandID("toggle_id") && !isServer())
+	{
+		params.saferead_u16(toggleId);
 	}
 }

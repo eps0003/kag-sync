@@ -22,16 +22,18 @@ void onTick(CRules@ this)
 	if (getPlayerCount() == 0) return;
 
 	Entity@[] entities = manager.getAll();
+	u16[] ids = manager.getIds();
 
 	for (uint i = 0; i < entities.size(); i++)
 	{
 		Entity@ entity = entities[i];
+		u16 id = ids[i];
 
 		entity.Update();
 
 		CBitStream bs;
 		bs.write_u16(entity.getType());
-		bs.write_u16(entity.getID());
+		bs.write_u16(id);
 		entity.Serialize(bs);
 
 		if (isServer())
@@ -58,14 +60,14 @@ void onCommand(CRules@ this, u8 cmd, CBitStream@ params)
 		Entity@ entity = manager.get(id);
 		if (entity is null)
 		{
-			@entity = createEntity(type, id);
+			@entity = createEntity(type);
 			if (entity is null)
 			{
 				error("Attempted to create entity with an invalid type");
 				return;
 			}
 
-			manager.Add(entity);
+			manager._Add(entity, id);
 		}
 
 		entity.deserialize(params);

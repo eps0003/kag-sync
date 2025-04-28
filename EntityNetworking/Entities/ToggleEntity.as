@@ -1,22 +1,6 @@
 shared class ToggleEntity : Entity
 {
-	private u16 id = 0;
 	private bool toggle = false;
-
-	ToggleEntity()
-	{
-		id = generateUniqueId();
-	}
-
-	ToggleEntity(u16 id)
-	{
-		this.id = id;
-	}
-
-	u16 getID()
-	{
-		return id;
-	}
 
 	u16 getType()
 	{

@@ -18,7 +18,7 @@ void onRestart(CRules@ this)
 			CPlayer@ player = getPlayer(i);
 			if (player is null) continue;
 
-			manager.Add(PlayerEntity(player));
+			AddPlayerEntity(player);
 		}
 	}
 }
@@ -27,7 +27,7 @@ void onNewPlayerJoin(CRules@ this, CPlayer@ player)
 {
 	if (isServer())
 	{
-		manager.Add(PlayerEntity(player));
+		AddPlayerEntity(player);
 	}
 }
 
@@ -35,6 +35,21 @@ void onPlayerLeave(CRules@ this, CPlayer@ player)
 {
 	if (isServer())
 	{
-		manager.Remove(player.get_u16("entity_id"));
+		RemovePlayerEntity(player);
 	}
+}
+
+void AddPlayerEntity(CPlayer@ player)
+{
+	u16 entityId = manager.add(PlayerEntity(player));
+
+	player.set_u16("entity_id", entityId);
+}
+
+void RemovePlayerEntity(CPlayer@ player)
+{
+	u16 entityId = player.get_u16("entity_id");
+
+	player.set_u16("entity_id", 0);
+	manager.Remove(entityId);
 }

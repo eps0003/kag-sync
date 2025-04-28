@@ -1,12 +1,18 @@
 shared class NetworkManager
 {
 	private Entity@[] entities;
+	private u16[] ids;
 	private dictionary entityMap;
 
-	void Add(Entity@ entity)
+	u16 add(Entity@ entity)
 	{
-		u16 id = entity.getID();
+		u16 id = generateUniqueId();
+		_Add(entity, id);
+		return id;
+	}
 
+	void _Add(Entity@ entity, u16 id)
+	{
 		if (exists(id))
 		{
 			error("Attempted to add an entity with an existing ID: " + id);
@@ -14,6 +20,7 @@ shared class NetworkManager
 		}
 
 		entities.push_back(entity);
+		ids.push_back(id);
 		entityMap.set("" + id, @entity);
 
 		print("Added entity: " + id);
@@ -23,9 +30,10 @@ shared class NetworkManager
 	{
 		for (uint i = 0; i < entities.size(); i++)
 		{
-			if (entities[i].getID() == id)
+			if (ids[i] == id)
 			{
 				entities.removeAt(i);
+				ids.removeAt(i);
 				entityMap.delete("" + id);
 
 				print("Removed entity: " + id);
@@ -47,6 +55,7 @@ shared class NetworkManager
 	void RemoveAll()
 	{
 		entities.clear();
+		ids.clear();
 		entityMap.deleteAll();
 
 		print("Removed all entities");
@@ -67,6 +76,11 @@ shared class NetworkManager
 	Entity@[] getAll()
 	{
 		return entities;
+	}
+
+	u16[] getIds()
+	{
+		return ids;
 	}
 }
 

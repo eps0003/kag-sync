@@ -1,22 +1,10 @@
 shared class ParentEntity : Entity
 {
-	private u16 id = 0;
 	private u16 toggleId = 0;
 
-	ParentEntity(ToggleEntity@ toggle)
+	ParentEntity(u16 toggleId)
 	{
-		id = generateUniqueId();
-		toggleId = toggle.getID();
-	}
-
-	ParentEntity(u16 id)
-	{
-		this.id = id;
-	}
-
-	u16 getID()
-	{
-		return id;
+		this.toggleId = toggleId;
 	}
 
 	u16 getType()
