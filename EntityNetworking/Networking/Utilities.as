@@ -1,11 +1,16 @@
 shared u16 generateUniqueId()
 {
 	// 0 is reserved for uninitialized entities
-	// Does not account for ID collisions when it wraps around
-	// Surely by then, older entities will no longer exist
 
+	NetworkManager@ manager = Network::getManager();
 	u16 id = getRules().get_u16("_id");
-	id = id == 65535 ? 1 : id + 1;
+
+	do
+	{
+		id = id == 65535 ? 1 : id + 1;
+	}
+	while (manager.exists(id));
+
 	getRules().set_u16("_id", id);
 	return id;
 }
