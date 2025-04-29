@@ -5,11 +5,6 @@ shared class TemplateEntity : Entity
 		return 0;
 	}
 
-	CPlayer@ getOwner()
-	{
-		return null;
-	}
-
 	void Update()
 	{
 

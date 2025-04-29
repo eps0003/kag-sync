@@ -12,11 +12,6 @@ shared class ParentEntity : Entity
 		return EntityType::Parent;
 	}
 
-	CPlayer@ getOwner()
-	{
-		return null;
-	}
-
 	void Update()
 	{
 		if (isServer() && getGameTime() % getTicksASecond() == 0)
@@ -31,11 +26,19 @@ shared class ParentEntity : Entity
 
 	void Serialize(CBitStream@ bs)
 	{
-		bs.write_u16(toggleId);
+		if (isServer())
+		{
+			bs.write_u16(toggleId);
+		}
 	}
 
 	bool deserialize(CBitStream@ bs)
 	{
-		return bs.saferead_u16(toggleId);
+		if (!isServer())
+		{
+			return bs.saferead_u16(toggleId);
+		}
+
+		return false;
 	}
 }
