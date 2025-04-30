@@ -38,18 +38,28 @@ void onTick(CRules@ this)
 		CBitStream entityBs;
 		entity.Serialize(entityBs);
 
-		if (entityBs.Length() > 0)
+		if (entityBs.getBitsUsed() == 0)
 		{
-			bs.writeBitStream(entityBs);
+			manager.bsMap.delete("" + id);
+			continue;
+		}
 
-			if (isServer())
-			{
-				this.SendCommand(this.getCommandID("server sync"), bs, true);
-			}
-			else
-			{
-				this.SendCommand(this.getCommandID("client sync"), bs, false);
-			}
+		CBitStream@ lastEntityBs;
+		if (manager.bsMap.get("" + id, @lastEntityBs) && isSameBitStream(entityBs, lastEntityBs))
+		{
+			continue;
+		}
+
+		manager.bsMap.set("" + id, entityBs);
+		bs.writeBitStream(entityBs);
+
+		if (isServer())
+		{
+			this.SendCommand(this.getCommandID("server sync"), bs, true);
+		}
+		else
+		{
+			this.SendCommand(this.getCommandID("client sync"), bs, false);
 		}
 	}
 }
@@ -73,7 +83,7 @@ void onNewPlayerJoin(CRules@ this, CPlayer@ player)
 		CBitStream entityBs;
 		entity.Serialize(entityBs);
 
-		if (entityBs.Length() > 0)
+		if (entityBs.getBitsUsed() > 0)
 		{
 			bs.writeBitStream(entityBs);
 

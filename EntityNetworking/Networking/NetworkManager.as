@@ -3,6 +3,7 @@ shared class NetworkManager
 	private Entity@[] entities;
 	private u16[] ids;
 	private dictionary entityMap;
+	dictionary bsMap;
 
 	u16 add(Entity@ entity)
 	{
@@ -19,7 +20,12 @@ shared class NetworkManager
 		CBitStream bs;
 		bs.write_u16(entity.getType());
 		bs.write_u16(id);
-		entity.Serialize(bs);
+
+		CBitStream entityBs;
+		entity.Serialize(entityBs);
+
+		bsMap.set("" + id, entityBs);
+		bs.writeBitStream(entityBs);
 
 		getRules().SendCommand(getRules().getCommandID("create"), bs, true);
 
@@ -51,6 +57,7 @@ shared class NetworkManager
 				entities.removeAt(i);
 				ids.removeAt(i);
 				entityMap.delete("" + id);
+				bsMap.delete("" + id);
 
 				print("Removed entity: " + id);
 
