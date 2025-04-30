@@ -6,8 +6,23 @@ shared class NetworkManager
 
 	u16 add(Entity@ entity)
 	{
+		if (!isServer())
+		{
+			error("Attempted to add an entity on a client");
+			printTrace();
+			return 0;
+		}
+
 		u16 id = generateUniqueId();
 		_Add(entity, id);
+
+		CBitStream bs;
+		bs.write_u16(entity.getType());
+		bs.write_u16(id);
+		entity.Serialize(bs);
+
+		getRules().SendCommand(getRules().getCommandID("create"), bs, true);
+
 		return id;
 	}
 
@@ -16,6 +31,7 @@ shared class NetworkManager
 		if (exists(id))
 		{
 			error("Attempted to add an entity with an existing ID: " + id);
+			printTrace();
 			return;
 		}
 
@@ -50,15 +66,7 @@ shared class NetworkManager
 		}
 
 		error("Attempted to remove an entity that does not exist: " + id);
-	}
-
-	void RemoveAll()
-	{
-		entities.clear();
-		ids.clear();
-		entityMap.deleteAll();
-
-		print("Removed all entities");
+		printTrace();
 	}
 
 	bool exists(u16 id)
