@@ -19,7 +19,9 @@ shared class PlayerEntity : Entity
 		{
 			mousePos = getControls().getMouseScreenPos();
 		}
-		else if (player.getBlob().isKeyPressed(key_action1))
+
+		CBlob@ blob = player.getBlob();
+		if (blob !is null && blob.isKeyPressed(key_action1))
 		{
 			print(player.getUsername() + ": " + mousePos.toString());
 		}

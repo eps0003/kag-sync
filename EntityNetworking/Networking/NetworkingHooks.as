@@ -4,97 +4,36 @@ NetworkManager@ manager;
 
 void onInit(CRules@ this)
 {
-	this.addCommandID("create");
-	this.addCommandID("client sync");
-	this.addCommandID("server sync");
-	this.addCommandID("remove");
+	this.addCommandID("network create");
+	this.addCommandID("network client sync");
+	this.addCommandID("network server sync");
+	this.addCommandID("network remove");
+	this.addCommandID("network remove all");
 
-	onRestart(this);
+	@manager = Network::getManager();
 }
 
 void onRestart(CRules@ this)
 {
-	this.set("network manager", null);
-	@manager = Network::getManager();
+	if (isServer())
+	{
+		manager.RemoveAll();
+	}
 }
 
 void onTick(CRules@ this)
 {
-	if (getPlayerCount() == 0) return;
-
-	Entity@[] entities = manager.getAll();
-	u16[] ids = manager.getIds();
-
-	for (uint i = 0; i < entities.size(); i++)
-	{
-		Entity@ entity = entities[i];
-		u16 id = ids[i];
-
-		entity.Update();
-
-		CBitStream bs;
-		bs.write_u16(id);
-
-		CBitStream entityBs;
-		entity.Serialize(entityBs);
-
-		if (entityBs.getBitsUsed() == 0)
-		{
-			manager.bsMap.delete("" + id);
-			continue;
-		}
-
-		CBitStream@ lastEntityBs;
-		if (manager.bsMap.get("" + id, @lastEntityBs) && isSameBitStream(entityBs, lastEntityBs))
-		{
-			continue;
-		}
-
-		manager.bsMap.set("" + id, entityBs);
-		bs.writeBitStream(entityBs);
-
-		if (isServer())
-		{
-			this.SendCommand(this.getCommandID("server sync"), bs, true);
-		}
-		else
-		{
-			this.SendCommand(this.getCommandID("client sync"), bs, false);
-		}
-	}
+	manager._SyncTick();
 }
 
 void onNewPlayerJoin(CRules@ this, CPlayer@ player)
 {
-	if (!isServer()) return;
-
-	Entity@[] entities = manager.getAll();
-	u16[] ids = manager.getIds();
-
-	for (uint i = 0; i < entities.size(); i++)
-	{
-		Entity@ entity = entities[i];
-		u16 id = ids[i];
-
-		CBitStream bs;
-		bs.write_u16(entity.getType());
-		bs.write_u16(id);
-
-		CBitStream entityBs;
-		entity.Serialize(entityBs);
-
-		if (entityBs.getBitsUsed() > 0)
-		{
-			bs.writeBitStream(entityBs);
-
-			this.SendCommand(this.getCommandID("create"), bs, player);
-		}
-	}
+	manager._SyncNewPlayer(player);
 }
 
 void onCommand(CRules@ this, u8 cmd, CBitStream@ params)
 {
-	if (cmd == this.getCommandID("create") && !isServer())
+	if (cmd == this.getCommandID("network create") && !isServer())
 	{
 		u16 type;
 		if (!params.saferead_u16(type)) return;
@@ -111,12 +50,12 @@ void onCommand(CRules@ this, u8 cmd, CBitStream@ params)
 
 		if (!entity.deserialize(params))
 		{
-			error("Failed to deserialize entity: " + id);
+			error("Failed to deserialize entity (id: " + id + ", type: " + type + ")");
 		}
 
 		manager._Add(entity, id);
 	}
-	else if (cmd == this.getCommandID("server sync") && !isServer())
+	else if (cmd == this.getCommandID("network server sync") && !isServer())
 	{
 		u16 id;
 		if (!params.saferead_u16(id)) return;
@@ -126,10 +65,10 @@ void onCommand(CRules@ this, u8 cmd, CBitStream@ params)
 
 		if (!entity.deserialize(params))
 		{
-			error("Failed to deserialize entity: " + id);
+			error("Failed to deserialize entity (id: " + id + ")");
 		}
 	}
-	else if (cmd == this.getCommandID("client sync") && isServer())
+	else if (cmd == this.getCommandID("network client sync") && isServer())
 	{
 		u16 id;
 		if (!params.saferead_u16(id)) return;
@@ -139,14 +78,18 @@ void onCommand(CRules@ this, u8 cmd, CBitStream@ params)
 
 		if (!entity.deserialize(params))
 		{
-			error("Failed to deserialize entity: " + id);
+			error("Failed to deserialize entity (id: " + id + ")");
 		}
 	}
-	else if (cmd == this.getCommandID("remove") && !isServer())
+	else if (cmd == this.getCommandID("network remove") && !isServer())
 	{
 		u16 id;
 		if (!params.saferead_u16(id)) return;
 
-		manager.Remove(id);
+		manager._Remove(id);
+	}
+	else if (cmd == this.getCommandID("network remove all") && !isServer())
+	{
+		manager._RemoveAll();
 	}
 }
