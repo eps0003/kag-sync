@@ -28,8 +28,6 @@ shared class NetworkManager
 		return uniqueId;
 	}
 
-
-
 	// Add an entity on the server
 	u16 add(Entity@ entity)
 	{
@@ -122,6 +120,7 @@ shared class NetworkManager
 		print("Added entity (id: " + id + ", type: " + entity.getType() + ")");
 	}
 
+	// Remove an entity on the server
 	void Remove(Entity@ entity)
 	{
 		if (!isServer())
@@ -167,13 +166,6 @@ shared class NetworkManager
 			return;
 		}
 
-		if (!exists(id))
-		{
-			error("Attempted to remove an entity with an unknown ID");
-			printTrace();
-			return;
-		}
-
 		for (uint i = 0; i < entities.size(); i++)
 		{
 			if (ids[i] == id)
@@ -194,6 +186,9 @@ shared class NetworkManager
 				return;
 			}
 		}
+
+		error("Attempted to remove an entity with an unknown ID");
+		printTrace();
 	}
 
 	// Remove a entity on the client
@@ -202,13 +197,6 @@ shared class NetworkManager
 		if (isServer())
 		{
 			error("Attempted to remove an entity on the server using a client-specific method");
-			printTrace();
-			return;
-		}
-
-		if (!exists(id))
-		{
-			error("Attempted to remove an entity with an unknown ID");
 			printTrace();
 			return;
 		}
@@ -229,6 +217,9 @@ shared class NetworkManager
 				return;
 			}
 		}
+
+		error("Attempted to remove an entity with an unknown ID");
+		printTrace();
 	}
 
 	// Remove all entities on the server
