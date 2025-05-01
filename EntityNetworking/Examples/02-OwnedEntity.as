@@ -4,11 +4,6 @@ NetworkManager@ manager;
 
 void onInit(CRules@ this)
 {
-	onRestart(this);
-}
-
-void onRestart(CRules@ this)
-{
 	@manager = Network::getManager();
 
 	if (isServer())

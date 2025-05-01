@@ -17,3 +17,7 @@ Demonstrates entities owned by each player that sync mouse position to the serve
 ### `03-ReferencedEntity.as`
 
 Demonstrates how entities should be referenced by their ID.
+
+### `04-SingletonEntity.as`
+
+Demonstrates instantiating specific entities first so their IDs are known by both the server and clients without needing to sync it.

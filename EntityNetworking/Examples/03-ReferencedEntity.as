@@ -7,32 +7,24 @@ void onInit(CRules@ this)
 {
 	this.addCommandID("toggle_id");
 
-	onRestart(this);
-}
-
-void onRestart(CRules@ this)
-{
 	@manager = Network::getManager();
+
+	if (isServer())
+	{
+		ToggleEntity@ toggle = ToggleEntity();
+		toggleId = manager.add(toggle);
+
+		Entity@ parent = ParentEntity(toggleId);
+		manager.add(parent);
+
+		CBitStream bs;
+		bs.write_u16(toggleId);
+		this.SendCommand(this.getCommandID("toggle_id"), bs, true);
+	}
 }
 
 void onTick(CRules@ this)
 {
-	if (isServer())
-	{
-		if (getGameTime() == 1)
-		{
-			ToggleEntity@ toggle = ToggleEntity();
-			toggleId = manager.add(toggle);
-
-			Entity@ parent = ParentEntity(toggleId);
-			manager.add(parent);
-
-			CBitStream bs;
-			bs.write_u16(toggleId);
-			this.SendCommand(this.getCommandID("toggle_id"), bs, true);
-		}
-	}
-
 	if (isClient())
 	{
 		ToggleEntity@ toggle = cast<ToggleEntity>(manager.get(toggleId));

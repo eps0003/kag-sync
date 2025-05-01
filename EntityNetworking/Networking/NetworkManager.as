@@ -67,17 +67,20 @@ shared class NetworkManager
 
 		print("Added entity (id: " + id + ", type: " + entity.getType() + ")");
 
-		CBitStream bs;
-		bs.write_u16(entity.getType());
-		bs.write_u16(id);
+		if (getPlayerCount() > 0)
+		{
+			CBitStream bs;
+			bs.write_u16(entity.getType());
+			bs.write_u16(id);
 
-		CBitStream entityBs;
-		entity.Serialize(entityBs);
+			CBitStream entityBs;
+			entity.Serialize(entityBs);
 
-		bsMap.set("" + id, entityBs);
-		bs.writeBitStream(entityBs);
+			bsMap.set("" + id, entityBs);
+			bs.writeBitStream(entityBs);
 
-		getRules().SendCommand(getRules().getCommandID("network create"), bs, true);
+			getRules().SendCommand(getRules().getCommandID("network create"), bs, true);
+		}
 
 		return id;
 	}
@@ -144,9 +147,12 @@ shared class NetworkManager
 
 				print("Removed entity (id: " + id + ", type: " + type + ")");
 
-				CBitStream bs;
-				bs.write_u16(id);
-				getRules().SendCommand(getRules().getCommandID("network remove"), bs, true);
+				if (getPlayerCount() > 0)
+				{
+					CBitStream bs;
+					bs.write_u16(id);
+					getRules().SendCommand(getRules().getCommandID("network remove"), bs, true);
+				}
 
 				return;
 			}
@@ -179,9 +185,12 @@ shared class NetworkManager
 
 				print("Removed entity (id: " + id + ", type: " + type + ")");
 
-				CBitStream bs;
-				bs.write_u16(id);
-				getRules().SendCommand(getRules().getCommandID("network remove"), bs, true);
+				if (getPlayerCount() > 0)
+				{
+					CBitStream bs;
+					bs.write_u16(id);
+					getRules().SendCommand(getRules().getCommandID("network remove"), bs, true);
+				}
 
 				return;
 			}
@@ -241,8 +250,11 @@ shared class NetworkManager
 
 		print("Removed all entities");
 
-		CBitStream bs;
-		getRules().SendCommand(getRules().getCommandID("network remove all"), bs, true);
+		if (getPlayerCount() > 0)
+		{
+			CBitStream bs;
+			getRules().SendCommand(getRules().getCommandID("network remove all"), bs, true);
+		}
 	}
 
 	// Remove all entities on the client

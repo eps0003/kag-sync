@@ -13,14 +13,6 @@ void onInit(CRules@ this)
 	@manager = Network::getManager();
 }
 
-void onRestart(CRules@ this)
-{
-	if (isServer())
-	{
-		manager.RemoveAll();
-	}
-}
-
 void onTick(CRules@ this)
 {
 	manager._SyncTick();

@@ -1,47 +1,36 @@
 #include "Networking.as"
 
 NetworkManager@ manager;
+
+ToggleEntity@ entity;
 u16 entityId = 0;
 
 void onInit(CRules@ this)
 {
 	this.addCommandID("entity_id");
 
-	onRestart(this);
-}
-
-void onRestart(CRules@ this)
-{
 	@manager = Network::getManager();
+
+	if (isServer())
+	{
+		@entity = ToggleEntity();
+		entityId = manager.add(entity);
+	}
 }
 
 void onTick(CRules@ this)
 {
-	if (isServer())
+	if (isServer() && getGameTime() % getTicksASecond() == 0)
 	{
-		if (getGameTime() == 1)
-		{
-			ToggleEntity@ entity = ToggleEntity();
-			entityId = manager.add(entity);
-		}
-
-		if (getGameTime() % getTicksASecond() == 0)
-		{
-			ToggleEntity@ entity = cast<ToggleEntity>(manager.get(entityId));
-			if (entity !is null)
-			{
-				entity.Toggle();
-			}
-		}
+		entity.Toggle();
 	}
+}
 
-	if (isClient())
+void onRender(CRules@ this)
+{
+	if (entity !is null)
 	{
-		ToggleEntity@ entity = cast<ToggleEntity>(manager.get(entityId));
-		if (entity !is null)
-		{
-			print(""+entity.getToggled());
-		}
+		GUI::DrawText("Toggled: " + entity.getToggled(), Vec2f(10, 10), color_white);
 	}
 }
 
@@ -59,6 +48,8 @@ void onCommand(CRules@ this, u8 cmd, CBitStream@ params)
 {
 	if (cmd == this.getCommandID("entity_id") && !isServer())
 	{
-		params.saferead_u16(entityId);
+		if (!params.saferead_u16(entityId)) return;
+
+		@entity = cast<ToggleEntity>(manager.get(entityId));
 	}
 }
