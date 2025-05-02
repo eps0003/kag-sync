@@ -67,16 +67,15 @@ shared class NetworkManager
 
 		print("Added entity (id: " + id + ", type: " + entity.getType() + ")");
 
+		CBitStream entityBs;
+		entity.Serialize(entityBs);
+		bsMap.set("" + id, entityBs);
+
 		if (getPlayerCount() > 0)
 		{
 			CBitStream bs;
 			bs.write_u16(entity.getType());
 			bs.write_u16(id);
-
-			CBitStream entityBs;
-			entity.Serialize(entityBs);
-
-			bsMap.set("" + id, entityBs);
 			bs.writeBitStream(entityBs);
 
 			getRules().SendCommand(getRules().getCommandID("network create"), bs, true);
@@ -304,8 +303,6 @@ shared class NetworkManager
 
 	void _SyncTick()
 	{
-		if (getPlayerCount() == 0) return;
-
 		for (uint i = 0; i < entities.size(); i++)
 		{
 			Entity@ entity = entities[i];
@@ -334,7 +331,10 @@ shared class NetworkManager
 
 			if (isServer())
 			{
-				getRules().SendCommand(getRules().getCommandID("network server sync"), bs, true);
+				if (getPlayerCount() > 0)
+				{
+					getRules().SendCommand(getRules().getCommandID("network server sync"), bs, true);
+				}
 			}
 			else
 			{
