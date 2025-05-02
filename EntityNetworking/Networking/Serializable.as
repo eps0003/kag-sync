@@ -1,4 +1,4 @@
-shared interface Entity
+shared interface Serializable
 {
 	u16 getType();
 

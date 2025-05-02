@@ -1,3 +1,3 @@
-#include "Entity.as"
+#include "Serializable.as"
 #include "NetworkManager.as"
-#include "NetworkingEntities.as"
+#include "NetworkingObjects.as"

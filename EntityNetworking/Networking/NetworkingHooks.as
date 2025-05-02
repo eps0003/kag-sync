@@ -33,32 +33,32 @@ void onCommand(CRules@ this, u8 cmd, CBitStream@ params)
 		u16 id;
 		if (!params.saferead_u16(id)) return;
 
-		Entity@ entity = createEntity(type);
-		if (entity is null)
+		Serializable@ object = createObject(type);
+		if (object is null)
 		{
-			error("Attempted to create entity with an invalid type");
+			error("Attempted to create object with an invalid type");
 			return;
 		}
 
-		if (!entity.deserialize(params))
+		if (!object.deserialize(params))
 		{
-			error("Failed to deserialize entity (id: " + id + ", type: " + type + ")");
+			error("Failed to deserialize object (id: " + id + ", type: " + type + ")");
 			return;
 		}
 
-		manager._Add(entity, id);
+		manager._Add(object, id);
 	}
 	else if (cmd == this.getCommandID("network server sync") && !isServer())
 	{
 		u16 id;
 		if (!params.saferead_u16(id)) return;
 
-		Entity@ entity = manager.get(id);
-		if (entity is null) return;
+		Serializable@ object = manager.get(id);
+		if (object is null) return;
 
-		if (!entity.deserialize(params))
+		if (!object.deserialize(params))
 		{
-			error("Failed to deserialize entity (id: " + id + ")");
+			error("Failed to deserialize object (id: " + id + ")");
 		}
 	}
 	else if (cmd == this.getCommandID("network client sync") && isServer())
@@ -66,12 +66,12 @@ void onCommand(CRules@ this, u8 cmd, CBitStream@ params)
 		u16 id;
 		if (!params.saferead_u16(id)) return;
 
-		Entity@ entity = manager.get(id);
-		if (entity is null) return;
+		Serializable@ object = manager.get(id);
+		if (object is null) return;
 
-		if (!entity.deserialize(params))
+		if (!object.deserialize(params))
 		{
-			error("Failed to deserialize entity (id: " + id + ")");
+			error("Failed to deserialize object (id: " + id + ")");
 		}
 	}
 	else if (cmd == this.getCommandID("network remove") && !isServer())
