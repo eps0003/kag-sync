@@ -353,11 +353,6 @@ shared class NetworkManager
 			CBitStream objectBs;
 			object.Serialize(objectBs);
 
-			if (objectBs.getBitsUsed() == 0)
-			{
-				continue;
-			}
-
 			CBitStream bs;
 			bs.write_u16(object.getType());
 			bs.write_u16(id);
