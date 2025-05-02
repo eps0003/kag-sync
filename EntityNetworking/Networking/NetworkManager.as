@@ -368,6 +368,27 @@ shared class NetworkManager
 			getRules().SendCommand(getRules().getCommandID("network create"), bs, player);
 		}
 	}
+
+	private bool isSameBitStream(CBitStream a, CBitStream b)
+	{
+		if (a.getBitsUsed() != b.getBitsUsed())
+		{
+			return false;
+		}
+
+		a.ResetBitIndex();
+		b.ResetBitIndex();
+
+		while (!a.isBufferEnd())
+		{
+			if (a.read_bool() != b.read_bool())
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
 }
 
 namespace Network
