@@ -311,8 +311,6 @@ shared class NetworkManager
 			Entity@ entity = entities[i];
 			u16 id = ids[i];
 
-			entity.Update();
-
 			CBitStream entityBs;
 			entity.Serialize(entityBs);
 

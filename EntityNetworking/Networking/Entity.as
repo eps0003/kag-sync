@@ -4,6 +4,4 @@ shared interface Entity
 
 	void Serialize(CBitStream@ bs);
 	bool deserialize(CBitStream@ bs);
-
-	void Update();
 }

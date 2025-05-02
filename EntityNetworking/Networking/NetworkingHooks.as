@@ -43,6 +43,7 @@ void onCommand(CRules@ this, u8 cmd, CBitStream@ params)
 		if (!entity.deserialize(params))
 		{
 			error("Failed to deserialize entity (id: " + id + ", type: " + type + ")");
+			return;
 		}
 
 		manager._Add(entity, id);
