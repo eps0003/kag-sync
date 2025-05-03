@@ -372,7 +372,7 @@ shared class NetworkManager
 		a.ResetBitIndex();
 		b.ResetBitIndex();
 
-		while (!a.isBufferEnd())
+		for (uint i = 0; i < a.getBitsUsed(); i++)
 		{
 			if (a.read_bool() != b.read_bool())
 			{
