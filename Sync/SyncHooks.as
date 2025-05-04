@@ -1,26 +1,26 @@
-#include "Networking.as"
+#include "Sync.as"
 
-NetworkManager@ manager;
+CSync sync;
 
 void onInit(CRules@ this)
 {
+	getRules().set("network sync", sync);
+
 	this.addCommandID("network create");
 	this.addCommandID("network client sync");
 	this.addCommandID("network server sync");
 	this.addCommandID("network remove");
 	this.addCommandID("network remove all");
-
-	@manager = Network::getManager();
 }
 
 void onTick(CRules@ this)
 {
-	manager._SyncTick();
+	sync._SyncTick();
 }
 
 void onNewPlayerJoin(CRules@ this, CPlayer@ player)
 {
-	manager._SyncNewPlayer(player);
+	sync._SyncNewPlayer(player);
 }
 
 void onCommand(CRules@ this, u8 cmd, CBitStream@ params)
@@ -46,14 +46,14 @@ void onCommand(CRules@ this, u8 cmd, CBitStream@ params)
 			return;
 		}
 
-		manager._Add(object, id);
+		sync._Add(object, id);
 	}
 	else if (cmd == this.getCommandID("network server sync") && !isServer())
 	{
 		u16 id;
 		if (!params.saferead_u16(id)) return;
 
-		Serializable@ object = manager.get(id);
+		Serializable@ object = sync.get(id);
 		if (object is null) return;
 
 		if (!object.deserialize(params))
@@ -66,7 +66,7 @@ void onCommand(CRules@ this, u8 cmd, CBitStream@ params)
 		u16 id;
 		if (!params.saferead_u16(id)) return;
 
-		Serializable@ object = manager.get(id);
+		Serializable@ object = sync.get(id);
 		if (object is null) return;
 
 		if (!object.deserialize(params))
@@ -79,10 +79,10 @@ void onCommand(CRules@ this, u8 cmd, CBitStream@ params)
 		u16 id;
 		if (!params.saferead_u16(id)) return;
 
-		manager._Remove(id);
+		sync._Remove(id);
 	}
 	else if (cmd == this.getCommandID("network remove all") && !isServer())
 	{
-		manager._RemoveAll();
+		sync._RemoveAll();
 	}
 }

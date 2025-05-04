@@ -1,4 +1,14 @@
-shared class NetworkManager
+#include "SerializableObjects.as"
+
+shared interface Serializable
+{
+	u16 getType();
+
+	void Serialize(CBitStream@ bs);
+	bool deserialize(CBitStream@ bs);
+}
+
+shared class CSync
 {
 	private u16 uniqueId = 0;
 	private Serializable@[] objects;
@@ -381,16 +391,9 @@ shared class NetworkManager
 	}
 }
 
-namespace Network
+shared CSync@ getSync()
 {
-	shared NetworkManager@ getManager()
-	{
-		NetworkManager@ manager;
-		if (!getRules().get("network manager", @manager))
-		{
-			@manager = NetworkManager();
-			getRules().set("network manager", @manager);
-		}
-		return manager;
-	}
+	CSync@ sync;
+    getRules().set("network sync", @sync);
+	return sync;
 }
