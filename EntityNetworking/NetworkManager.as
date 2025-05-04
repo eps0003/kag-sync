@@ -350,13 +350,10 @@ shared class NetworkManager
 			Serializable@ object = objects[i];
 			u16 id = ids[i];
 
-			CBitStream objectBs;
-			object.Serialize(objectBs);
-
 			CBitStream bs;
 			bs.write_u16(object.getType());
 			bs.write_u16(id);
-			bs.writeBitStream(objectBs);
+			object.Serialize(bs);
 
 			getRules().SendCommand(getRules().getCommandID("network create"), bs, player);
 		}
