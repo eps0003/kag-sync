@@ -17,7 +17,7 @@ Classes implement the `Serializable` interface and are added to Sync. Sync then 
 
 ### 1. Add Sync to you Mods folder and `mods.cfg`
 
-In `mods.cfg`, list `Sync` before before your mod:
+In `mods.cfg`, list `Sync` before your mod:
 
 ```cfg
 # mods.cfg
@@ -46,18 +46,18 @@ It must contain the `shared Serializable@ createObject(u16 type)` function. The 
 
 #include "Foo.as"
 
-// An enum of object types that is referenced in classes that implement the Serializable interface and the function below
 shared enum ObjectType
 {
     Foo,
 }
 
-// A function that is used internally to instantiate synced objects on the client
+// Used internally to instantiate synced objects on the client
 shared Serializable@ createObject(u16 type)
 {
     switch (type)
     {
     case ObjectType::Foo:
+        // Use the default constructor
         return Foo();
     }
     return null;
@@ -78,12 +78,12 @@ The interface defines three methods:
 #include "Sync.as"
 #include "SerializableObjects.as"
 
-// Everything in your mod must use the `shared` keyword, otherwise, casting will have issues
+// Use the `shared` keyword everywhere so casting objects works correctly
 shared class Foo : Serializable
 {
     string name;
 
-    // This constructor is used when instantiating on the server, and internally the default Foo() constructor is used when instantiating on the client
+    // This constructor is used when instantiating on the server
     Foo(string name)
     {
         this.name = name;
@@ -95,10 +95,10 @@ shared class Foo : Serializable
         return ObjectType::Foo;
     }
 
-    // A command is sent to sync the object if the serialized data differs from last tick
+    // A command is sent if there is serialized data and it differs from data sent previously
     void Serialize(CBitStream@ bs)
     {
-        // Serialize state on the server to send to clients
+        // Serialize state on the server
         if (isServer())
         {
             bs.write_string(name);
@@ -107,10 +107,10 @@ shared class Foo : Serializable
 
     bool deserialize(CBitStream@ bs)
     {
-        // Deserialize synced state on the client that was sent from the server
+        // Deserialize synced state on the client
         if (!isServer())
         {
-            // Saferead to avoid crashes, and return false to signify that deserialization failed
+            // Use saferead methods to avoid crashes, and return false on failure
             if (!bs.saferead_string(name)) return false;
         }
 
@@ -120,6 +120,8 @@ shared class Foo : Serializable
 ```
 
 ### 5. Add the object to be synced
+
+This example also demonstrates one way clients can refer to the synced object.
 
 ```angelscript
 // A script added to the rules .cfg file
@@ -148,7 +150,7 @@ void onRender(CRules@ this)
     // Get the object ID that we synced from the server
     u16 id = this.get_u16("foo_id");
 
-    // 0 can represent no ID because it will never be assigned to a synced object
+    // 0 is a reserved ID which means no object
     if (id == 0) return;
 
     // Get the object that is being synced from the server
@@ -164,7 +166,7 @@ void onRender(CRules@ this)
 
 ### 6. Remove the object when it no longer needs to be synced
 
-This frees up the object ID for use by another synced object in the future. If this isn't done, a long-running server could exhaust all available IDs, causing major issues.
+This frees up the object ID for use by another synced object in the future. If this isn't done, objects won't be garbage collected and will continue to consume memory, and the server could eventually exhaust all available IDs, causing major issues.
 
 ```angelscript
 // Synced objects must be removed on the server

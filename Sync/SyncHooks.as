@@ -1,10 +1,10 @@
 #include "Sync.as"
 
-CSync sync;
+CSync@ sync;
 
 void onInit(CRules@ this)
 {
-	getRules().set("network sync", sync);
+	@sync = getSync();
 
 	this.addCommandID("network create");
 	this.addCommandID("network client sync");
@@ -61,7 +61,7 @@ void onCommand(CRules@ this, u8 cmd, CBitStream@ params)
 			error("Failed to deserialize object (id: " + id + ")");
 		}
 	}
-	else if (cmd == this.getCommandID("network client sync") && isServer())
+	else if (cmd == this.getCommandID("network client sync") && !isClient())
 	{
 		u16 id;
 		if (!params.saferead_u16(id)) return;

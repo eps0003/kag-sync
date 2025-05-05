@@ -79,7 +79,11 @@ shared class CSync
 
 		CBitStream objectBs;
 		object.Serialize(objectBs);
-		bsMap.set("" + id, objectBs);
+
+		if (objectBs.getBitsUsed() > 0)
+		{
+			bsMap.set("" + id, objectBs);
+		}
 
 		if (getPlayerCount() > 0)
 		{
@@ -209,7 +213,7 @@ shared class CSync
 		printTrace();
 	}
 
-	// Remove a object on the client
+	// Remove an object on the client
 	void _Remove(u16 id)
 	{
 		if (isServer())
@@ -286,11 +290,13 @@ shared class CSync
 		print("Removed all objects");
 	}
 
+	// Check if an object is being synced using its ID
 	bool exists(u16 id)
 	{
 		return objectMap.exists("" + id);
 	}
 
+	// Check if an object is being synced using its handle
 	bool exists(Serializable@ object)
 	{
 		for (uint i = 0; i < objects.size(); i++)
@@ -304,6 +310,7 @@ shared class CSync
 		return false;
 	}
 
+	// Get an object that is being synced
 	Serializable@ get(u16 id)
 	{
 		Serializable@ object;
@@ -394,6 +401,10 @@ shared class CSync
 shared CSync@ getSync()
 {
 	CSync@ sync;
-    getRules().set("network sync", @sync);
+	if (!getRules().get("network sync", @sync))
+	{
+		@sync = CSync();
+		getRules().set("network sync", @sync);
+	}
 	return sync;
 }
