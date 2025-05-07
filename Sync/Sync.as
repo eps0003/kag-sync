@@ -71,19 +71,15 @@ shared class CSync
 			return 0;
 		}
 
-		objects.push_back(object);
-		ids.push_back(id);
-		objectMap.set("" + id, @object);
-
-		print("Added object (id: " + id + ", type: " + object.getType() + ")");
-
 		CBitStream objectBs;
 		object.Serialize(objectBs);
 
-		if (objectBs.getBitsUsed() > 0)
-		{
-			bsMap.set("" + id, objectBs);
-		}
+		objects.push_back(object);
+		ids.push_back(id);
+		objectMap.set("" + id, @object);
+		bsMap.set("" + id, objectBs);
+
+		print("Added object (id: " + id + ", type: " + object.getType() + ")");
 
 		if (getPlayerCount() > 0)
 		{
@@ -328,11 +324,6 @@ shared class CSync
 			CBitStream objectBs;
 			object.Serialize(objectBs);
 
-			if (objectBs.getBitsUsed() == 0)
-			{
-				continue;
-			}
-
 			CBitStream@ lastObjectBs;
 
 			if (bsMap.get("" + id, @lastObjectBs) && isSameBitStream(objectBs, lastObjectBs))
@@ -340,21 +331,25 @@ shared class CSync
 				continue;
 			}
 
-			CBitStream bs;
-			bs.write_u16(id);
-			bs.writeBitStream(objectBs);
-
 			bsMap.set("" + id, objectBs);
 
 			if (isServer())
 			{
 				if (getPlayerCount() > 0)
 				{
+					CBitStream bs;
+					bs.write_u16(id);
+					bs.writeBitStream(objectBs);
+
 					getRules().SendCommand(getRules().getCommandID("network server sync"), bs, true);
 				}
 			}
 			else
 			{
+				CBitStream bs;
+				bs.write_u16(id);
+				bs.writeBitStream(objectBs);
+
 				getRules().SendCommand(getRules().getCommandID("network client sync"), bs, false);
 			}
 		}

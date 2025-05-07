@@ -95,7 +95,7 @@ shared class Foo : Serializable
         return ObjectType::Foo;
     }
 
-    // A command is sent if there is serialized data and it differs from data sent previously
+    // A command is sent if serialized data differs from last tick
     void Serialize(CBitStream@ bs)
     {
         // Serialize state on the server
