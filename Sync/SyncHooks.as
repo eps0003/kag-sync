@@ -36,7 +36,7 @@ void onCommand(CRules@ this, u8 cmd, CBitStream@ params)
 		Serializable@ object = createObject(type);
 		if (object is null)
 		{
-			error("Attempted to create object with an invalid type");
+			error("Attempted to create object with an invalid type (id: " + id + ", type: " + type + ")");
 			return;
 		}
 
@@ -58,7 +58,7 @@ void onCommand(CRules@ this, u8 cmd, CBitStream@ params)
 
 		if (!object.deserialize(params))
 		{
-			error("Failed to deserialize object (id: " + id + ")");
+			error("Failed to deserialize object (id: " + id + ", type: " + object.getType() + ")");
 		}
 	}
 	else if (cmd == this.getCommandID("network client sync") && !isClient())
@@ -71,7 +71,7 @@ void onCommand(CRules@ this, u8 cmd, CBitStream@ params)
 
 		if (!object.deserialize(params))
 		{
-			error("Failed to deserialize object (id: " + id + ")");
+			error("Failed to deserialize object (id: " + id + ", type: " + object.getType() + ")");
 		}
 	}
 	else if (cmd == this.getCommandID("network remove") && !isServer())
