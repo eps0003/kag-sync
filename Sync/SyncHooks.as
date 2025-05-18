@@ -40,13 +40,13 @@ void onCommand(CRules@ this, u8 cmd, CBitStream@ params)
 			return;
 		}
 
+		sync._Add(object, id);
+
 		if (!object.deserialize(params))
 		{
 			error("Failed to deserialize object (id: " + id + ", type: " + type + ")");
 			return;
 		}
-
-		sync._Add(object, id);
 	}
 	else if (cmd == this.getCommandID("network server sync") && !isServer())
 	{
